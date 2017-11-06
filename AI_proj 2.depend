@@ -1,10 +1,13 @@
 # depslib dependency file v1.0
-1509224191 source:c:\my programs\practice\ai_proj 2\main.cpp
+1509932910 source:c:\my programs\practice\ai_proj 2\main.cpp
 	<iostream>
 	"Board.h"
+	<string>
 
-1509224212 c:\my programs\practice\ai_proj 2\board.h
+1509933169 c:\my programs\practice\ai_proj 2\board.h
 	<iostream>
 	<stdlib.h>
 	<ctime>
+	<string.h>
+	<string>
 
