@@ -12,8 +12,9 @@ private:
     const int rows = 6;
     const int columns = 7;
     char board_position[6][7];
-    string find_X = "XXXX";
-    string find_0 = "0000";
+    string four_X = "XXXX";
+    string four_0 = "0000";
+    int row_offset=5;
 
 public:
     Board();
@@ -22,8 +23,15 @@ public:
     void select_position(char);
     bool isLeft(string check, int x, int y, int count, string finds);
     bool call_isLeft(char player);
+
     bool isHorizontal(char player);
-    bool eachRow(int);
+    bool eachRow(int,char,string);
+    bool isVertical(char);
+    bool eachColumn(int,char,string);
+
+    bool call_isRight(char);
+    bool isRight(string, int, int, int, string);
+
 };
 
 
@@ -37,12 +45,13 @@ Board::Board(){
 
 void Board:: display_board(){
      cout<<endl<<"******************* Displaying Current Board Positions ************"<<endl<<endl;
-    cout<< "    1  2  3  4  5  6  7"<< endl;
+    cout<< "   0  1  2  3  4  5  6"<< endl;
     cout <<"  +--------------------+"<< endl;
-    for (int i = 0; i < rows; i++) {
-        cout << " " << i << "|" ;
-        for (int j = 0; j < columns; j++) {
-            cout << "" << board_position[i][j];
+
+    for (int i = 0; i <rows; i++) {
+        cout << " " << row_offset-i<< "|" ;
+        for (int j = 0; j <columns; j++) {
+            cout << "" << board_position[row_offset-i][j];
             cout << "| ";
         }
         cout << "" << endl;
@@ -52,7 +61,9 @@ void Board:: display_board(){
 
 
 void Board::add_checker(char c, int row, int col){
-    board_position[row][col] = c;
+    if(board_position[row][col]==' '){
+        board_position[row][col] = c;
+    }
 }
 
 void Board:: select_position(char ch){
@@ -67,17 +78,17 @@ void Board:: select_position(char ch){
 }
 
 bool Board :: call_isLeft(char player){
-    string find;
+    string find_str;
     if(player=='X'){
-        find = find_X;
+        find_str = four_X;
     }
     else if(player=='0'){
-        find = find_0;
+        find_str = four_0;
     }
 
     for(int i =0; i < 3; i++){
             for(int j=0; j<4; j++){
-              if(isLeft("", i,  j, 4, find)){
+              if(isLeft("", i,  j, 4, find_str)){
                 return true;
               }
         }
@@ -107,12 +118,20 @@ bool Board :: isLeft(string check, int x, int y, int count, string finds){
 
 
 bool Board::isHorizontal(char player){
+
     bool status=false;
+    string find_str;
+
+    if(player=='X'){
+        find_str = four_X;
+    }
+    else{
+        find_str = four_0;
+    }
+
     for(int i=0;i<rows;i++){
         if(!status){
-            cout<<"checking "<<i<<" th row.."<<endl;
-            status = eachRow(i);
-            cout<<"status "<<status<<endl;
+            status = eachRow(i,player,find_str);
         }
         if(status)
             break;
@@ -120,20 +139,23 @@ bool Board::isHorizontal(char player){
     if(status){
         return true;
     }
+    else
+        return false;
 }
 
-bool Board::eachRow(int r){
+bool Board::eachRow(int r, char player, string find_str){
     int count = 0;
     string check="";
     for(int i = 0; i< columns;i++){
-        if(board_position[r][i] == 'X'){
+        if(board_position[r][i] == player){
             count++;
             check += board_position[r][i];
         }
         else{
           count=0;
+          check = "";
         }
-        if(count == 4 && check=="XXXX"){
+        if(count == 4 && check==find_str){
            break;
         }
     }
@@ -144,3 +166,96 @@ bool Board::eachRow(int r){
     else
         return false;
 }
+
+
+bool Board::isVertical(char player){
+    bool status=false;
+    string find_str;
+
+    if(player=='X'){
+        find_str = four_X;
+    }
+    else{
+        find_str = four_0;
+    }
+
+    for(int i=0;i<columns; i++){
+        if(!status){
+            status = eachColumn(i,player,find_str);
+        }
+        if(status)
+            break;
+    }
+    if(status){
+        return true;
+    }
+    else
+        return false;
+}
+
+bool Board::eachColumn(int c, char player, string find_str){
+    int count = 0;
+    string check="";
+    for(int i = 0; i< rows; i++){
+        if(board_position[i][c] == player){
+            count++;
+            check += board_position[i][c];
+        }
+        else{
+          count=0;
+          check = "";
+        }
+        if(count == 4 && check==find_str){
+           break;
+        }
+    }
+
+    if(count==4)
+        return true;
+
+    else
+        return false;
+}
+
+
+
+
+bool Board :: call_isRight(char player){
+    string find;
+    if(player=='X'){
+        find = four_X;
+    }
+    else if(player=='0'){
+        find = four_0;
+    }
+
+    for(int i = 6; i>4; i--){
+            for(int j=6; j>3; j--){
+              if(isRight("", i,  j, 4, find)){
+                return true;
+              }
+        }
+    }
+    return false;
+}
+
+bool Board :: isRight(string check, int x, int y, int count, string finds){
+    char chk = finds[0];
+
+    if(check==finds){
+        return true;
+    }
+
+    else if(count > 0){
+        count--;
+        if(board_position[x][y] == finds[0]){
+            check += board_position[x][y];
+            cout << "board position " << board_position[x][y] << " x: " << x << "y: " << y<< endl;
+        }
+        return isRight(check, x-1, y-1, count, finds);
+    }
+
+    else
+        return false;
+}
+
